@@ -33,8 +33,8 @@ export class CartRepository {
     return result
   }
 
-  productAdd (cid, pid) {
-    const result = this.dao.productAdd(cid, pid)
+  productAdd (cid, pid, user) {
+    const result = this.dao.productAdd(cid, pid, user)
     return result
   }
 

@@ -30,6 +30,18 @@ import { api } from '../utils/api.js'
           </li>
         `
 
+        const isPremium = `
+          <li>
+            <a href="/products">Productos</a>
+          </li>
+          <li>
+            <a href="/products/create">Nuevo producto</a>
+          </li>
+          <li>
+            <a href="/carts/${cart}" id="my-cart">Mi carrito</a>
+          </li>
+        `
+
         const isUser = `
           <li>
             <a href="/products">Productos</a>
@@ -39,8 +51,10 @@ import { api } from '../utils/api.js'
           </li>
         `
 
-        if (role === 'admin' || role === 'premium') {
+        if (role === 'admin') {
           containerLinks.innerHTML = isAdmin
+        } else if (role === 'premium') {
+          containerLinks.innerHTML = isPremium
         } else if (role === 'usuario') {
           containerLinks.innerHTML = isUser
         }

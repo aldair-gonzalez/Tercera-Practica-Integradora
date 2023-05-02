@@ -17,7 +17,9 @@ import { api } from '../utils/api.js'
     fetch(apiUser)
       .then(data => data.json())
       .then(user => {
-        if (user.status === 200) {
+        if (user.status !== 200) {
+          alert(user.error.message)
+        } else {
           usuario = user.payload
           fetch(apiProduct)
             .then(data => data.json())
@@ -60,12 +62,23 @@ import { api } from '../utils/api.js'
                       <button class="button-redirect-to-update bg-red-500 text-white py-2 px-4 font-bold rounded-md" id="delete-${payload._id}">Eliminar producto</button>
                     </div>
                   `
+
+                  const userPremium = document.createElement('div')
+                  userAdmin.innerHTML = `
+                    <div class="flex flex-col gap-3">
+                      <button class="button-redirect-to-update bg-emerald-500 text-white py-2 px-4 font-bold rounded-md" id="update-${payload._id}">Actualizar producto</button>
+                      <button class="button-redirect-to-update bg-red-500 text-white py-2 px-4 font-bold rounded-md" id="delete-${payload._id}">Eliminar producto</button>
+                      <button class="button-add-to-cart bg-emerald-500 text-white py-2 px-4 font-bold rounded-md" id="${payload._id}">Añadir al carrito</button>
+                    </div>
+                  `
                   const userUsuario = document.createElement('div')
                   userUsuario.innerHTML = `
                     <button class="button-add-to-cart bg-emerald-500 text-white py-2 px-4 font-bold rounded-md" id="${payload._id}">Añadir al carrito</button>
                   `
                   if (user.payload.role === 'admin' || user.payload.role === 'premium') {
                     containerProductSDetail.appendChild(userAdmin)
+                  } else if (user.payload.role === 'premium') {
+                    containerProductSDetail.appendChild(userPremium)
                   } else if (user.payload.role === 'usuario') {
                     containerProductSDetail.appendChild(userUsuario)
                   }
@@ -121,28 +134,35 @@ import { api } from '../utils/api.js'
         fetch(`${apiCarts}/${idCart}`)
           .then(data => data.json())
           .then(data => {
-            const addProductCart = () => {
-              fetch(`${apiCarts}/${idCart}/product/${idProduct}`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                }
-              })
-                .then(data => data.json())
-                .then(data => {
-                  if (data.status === 200) {
-                    alert('Product added to cart successfully')
-                  }
+            if (data.status !== 200) {
+              alert(data.error.message)
+            } else {
+              const addProductCart = () => {
+                fetch(`${apiCarts}/${idCart}/product/${idProduct}`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ user: usuario })
                 })
-            }
-            const { payload } = data
-            const { products } = payload
-            const item = products.find(item => item.product._id === idProduct)
-            if (!item) addProductCart()
-            else {
-              if (product.stock <= item.quantity) {
-                alert('Inventory stock limit has been exceeded')
-              } else addProductCart()
+                  .then(data => data.json())
+                  .then(data => {
+                    if (data.status !== 200) {
+                      alert(data.error.message)
+                    } else {
+                      alert('Product added to cart successfully')
+                    }
+                  })
+              }
+              const { payload } = data
+              const { products } = payload
+              const item = products.find(item => item.product._id === idProduct)
+              if (!item) addProductCart()
+              else {
+                if (product.stock <= item.quantity) {
+                  alert('Inventory stock limit has been exceeded')
+                } else addProductCart()
+              }
             }
           })
       })

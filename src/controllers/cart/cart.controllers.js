@@ -75,8 +75,9 @@ export const HandleProductGet = async (req, res, next) => {
 export const HandleProductAdd = async (req, res, next) => {
   try {
     req.logger.debug('cart controller: product add')
+    const { user } = req.body
     const { cid, pid } = req.params
-    const result = await cartService.productAdd(cid, pid)
+    const result = await cartService.productAdd(cid, pid, user)
     res.status(result.status).json(result)
   } catch (error) {
     next(error)

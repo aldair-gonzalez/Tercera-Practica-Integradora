@@ -105,6 +105,25 @@ class UserMongo {
     }
   }
 
+  async updateRole (uid, role) {
+    try {
+      if (!uid) HandlerError.createError({ code: CodeError.BAD_REQUEST, cause: InfoError.BAD_REQUEST, message: 'Id are required' })
+      if (!role) HandlerError.createError({ code: CodeError.BAD_REQUEST, cause: InfoError.BAD_REQUEST, message: 'Role are required' })
+
+      const exist = await userModel.findOne({ _id: uid })
+      if (!exist) HandlerError.createError({ code: CodeError.NOT_FOUND, cause: InfoError.NOT_FOUND, message: 'User not found' })
+
+      exist.role = await role
+
+      const result = await userModel.updateOne({ _id: uid }, exist)
+      const { modifiedCount } = result
+      if (!(modifiedCount > 0)) return response(202, null, { message: 'Not modified' })
+      return response(200, exist)
+    } catch (error) {
+      HandlerError.createError({ name: error.name, code: error.code, cause: error.cause, message: error.message })
+    }
+  }
+
   async delete (email) {
     try {
       const exist = await userModel.findOne({ email })

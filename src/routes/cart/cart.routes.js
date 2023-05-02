@@ -1,21 +1,21 @@
 import { Router } from 'express'
 
 import { HandleCreate, HandleDelete, HandleGetAll, HandleGetOne, HandleProductAdd, HandleProductRemove, HandleProductUpdate, HandlePurchase, HandleUpdate } from '../../controllers/cart/cart.controllers.js'
-import { requireApiSession, requireAuthRoleAdmin, requireAuthRoleUser } from '../../middlewares/session.js'
+import { requireApiSession, requireAuthRoleAdmin, requireAuthRoleUserOrPremium } from '../../middlewares/session.js'
 
 const router = Router()
 
 router.get('/', requireApiSession, requireAuthRoleAdmin, HandleGetAll)
-router.post('/', requireApiSession, requireAuthRoleUser, HandleCreate)
+router.post('/', requireApiSession, requireAuthRoleUserOrPremium, HandleCreate)
 
-router.get('/:cid', requireApiSession, requireAuthRoleUser, HandleGetOne)
-router.put('/:cid', requireApiSession, requireAuthRoleUser, HandleUpdate)
-router.delete('/:cid', requireApiSession, requireAuthRoleUser, HandleDelete)
+router.get('/:cid', requireApiSession, requireAuthRoleUserOrPremium, HandleGetOne)
+router.put('/:cid', requireApiSession, requireAuthRoleUserOrPremium, HandleUpdate)
+router.delete('/:cid', requireApiSession, requireAuthRoleUserOrPremium, HandleDelete)
 
-router.post('/:cid/purchase', requireApiSession, requireAuthRoleUser, HandlePurchase)
+router.post('/:cid/purchase', requireApiSession, requireAuthRoleUserOrPremium, HandlePurchase)
 
-router.post('/:cid/product/:pid', requireApiSession, requireAuthRoleUser, HandleProductAdd)
-router.put('/:cid/product/:pid', requireApiSession, requireAuthRoleUser, HandleProductUpdate)
-router.delete('/:cid/product/:pid', requireApiSession, requireAuthRoleUser, HandleProductRemove)
+router.post('/:cid/product/:pid', requireApiSession, requireAuthRoleUserOrPremium, HandleProductAdd)
+router.put('/:cid/product/:pid', requireApiSession, requireAuthRoleUserOrPremium, HandleProductUpdate)
+router.delete('/:cid/product/:pid', requireApiSession, requireAuthRoleUserOrPremium, HandleProductRemove)
 
 export default router

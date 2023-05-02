@@ -87,6 +87,9 @@ class ProductMongo {
       console.log('<-- ----------------------------------------------------------------------------- -->')
       console.log('<-- ----------------------------------------------------------------------------- -->')
 
+      const { _id, role } = user
+      if (role === 'premium') if (exist.owner.toString() !== _id.toString()) HandlerError.createError({ code: CodeError.UNAUTHORIZED, cause: InfoError.UNAUTHORIZED, message: 'You are not authorized to delete this product' })
+
       const result = await productModel.deleteOne({ _id: pid })
       const { deletedCount } = result
       if (!(deletedCount > 0)) return response(202, null, { message: 'Not deleted' })

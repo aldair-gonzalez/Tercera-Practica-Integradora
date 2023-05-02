@@ -28,6 +28,11 @@ export class UserRepository {
     return result
   }
 
+  updateRole (uid, role) {
+    const result = this.dao.updateRole(uid, role)
+    return result
+  }
+
   delete (email) {
     const result = this.dao.delete(email)
     return result

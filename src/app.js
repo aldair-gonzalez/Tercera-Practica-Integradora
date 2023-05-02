@@ -19,6 +19,7 @@ import RoutesProduct from './routes/product/product.routes.js'
 import RoutesCart from './routes/cart/cart.routes.js'
 import RoutesTicket from './routes/ticket/ticket.routes.js'
 import RoutesMocking from './routes/mocking/mocking.routes.js'
+import RoutesUser from './routes/user/user.routes.js'
 
 /* ------------------------------------------------------------------------------ */
 /* ------------------------------- Routes Render -------------------------------- */
@@ -56,6 +57,7 @@ app.use('/api/products', RoutesProduct)
 app.use('/api/carts', RoutesCart)
 app.use('/api/tickets', RoutesTicket)
 app.use('/api/mocking', RoutesMocking)
+app.use('/api/users', RoutesUser)
 
 /* ------------------------------------------------------------------------------ */
 /* -------------------------------- Routes Render ------------------------------- */

@@ -2,6 +2,7 @@ import { response } from '../../utils/response.js'
 import { sendMail } from '../../utils/nodemailer.js'
 import { logger } from '../../utils/logger.js'
 import { cartModel } from '../models/cart.model.js'
+import { productModel } from '../models/product.model.js'
 import { ProductCart } from '../patterns/productCart.pattern.js'
 import { Cart } from '../patterns/cart.pattern.js'
 import config from '../../config/config.js'
@@ -134,10 +135,20 @@ class CartMongo {
     }
   }
 
-  async productAdd (cid, pid) {
+  async productAdd (cid, pid, user) {
     try {
       const exist = await cartModel.findOne({ _id: cid }).populate(`${config.mongooseConfig.collections.products}.product`).lean()
       if (!exist) HandlerError.createError({ code: CodeError.NOT_FOUND, cause: InfoError.NOT_FOUND, message: 'Cart not found' })
+
+      const product = await productModel.findById(pid).lean()
+      if (!product) HandlerError.createError({ code: CodeError.NOT_FOUND, cause: InfoError.NOT_FOUND, message: 'Product not found' })
+
+      const { _id, role } = user
+      if (role === 'premium') {
+        if (JSON.stringify(product.owner) === JSON.stringify(_id)) {
+          HandlerError.createError({ code: CodeError.BAD_REQUEST, cause: InfoError.BAD_REQUEST, message: 'You cannot add your products to your cart' })
+        }
+      }
 
       const existProduct = exist.products.find(p => JSON.stringify(p.product._id) === JSON.stringify(pid))
 

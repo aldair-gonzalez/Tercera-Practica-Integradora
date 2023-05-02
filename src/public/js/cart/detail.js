@@ -4,7 +4,7 @@ import { api } from '../utils/api.js'
   const $ = (item) => document.querySelector(`${item}`)
 
   const idCart = window.location.pathname.split('/carts/').join('')
-  const urlCarts = `${api}/api/carts/${idCart}`
+  const urlCart = `${api}/api/carts/${idCart}`
   const urlApiUser = `${api}/api/session/current`
   const urlApiTicket = `${api}/api/tickets`
 
@@ -12,11 +12,13 @@ import { api } from '../utils/api.js'
   const paymentButton = $('#payment-button')
 
   let products
-  fetch(urlCarts)
+  fetch(urlCart)
     .then(data => data.json())
     .then(data => {
-      const { payload, status } = data
-      if (status === 200) {
+      const { payload } = data
+      if (data.status !== 200) {
+        alert(data.error.message)
+      } else {
         if (payload.products.length > 0) {
           products = payload.products
           let content = ''
@@ -42,8 +44,10 @@ import { api } from '../utils/api.js'
   fetch(urlApiUser)
     .then(data => data.json())
     .then(data => {
-      const { status, payload } = data
-      if (status === 200) {
+      const { payload } = data
+      if (data.status !== 200) {
+        alert(data.error.message)
+      } else {
         const { fullname, email } = payload
         const user = { fullname, email }
 
@@ -57,7 +61,7 @@ import { api } from '../utils/api.js'
             .then(data => {
               const { status } = data
               if (status === 201) {
-                fetch(`${urlCarts}/purchase`, {
+                fetch(`${urlCart}/purchase`, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json'

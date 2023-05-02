@@ -24,9 +24,14 @@ A la hora de iniciar el proyecto en producción hay que modificar la api de peti
   email: admin@gmail.com
   password: 123
 ```
+- `PREMIUM`:
+```
+  email: premium@gmail.com
+  password: 123
+```
 - `USUARIO`:
 ```
-  email: user@gmail.com
+  email: usuario@gmail.com
   password: 123
 ```
 
@@ -103,7 +108,7 @@ $ npm install # or `pnpm install` or `yarn install`
 ```
 
 ## Configuración del Proyecto con Standard.js
-Hubicarse dentro del siguiente directorio
+Ir al siguiente Directorio
 
 ```
 ├── node_modules/
@@ -118,10 +123,7 @@ En el archivo `eslintrc.json` pegar la siguiente configuración
   "env": {
     "browser": true
   },
-  "extends": ["standard", "standard-jsx"],
-  "rules": {
-    "camelcase": "off"
-  }
+  "extends": ["standard", "standard-jsx"]
 }
 ```
 

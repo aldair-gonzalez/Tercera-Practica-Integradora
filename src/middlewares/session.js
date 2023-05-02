@@ -27,22 +27,22 @@ const validateSession = async (req, res, next, path) => {
 }
 
 const validateUser = async (req, res, next, role) => {
-  const session = jwt.verify(req.cookies.jwt, config.authConfig.jwtSessionSecret)
-  if (session.role !== role) {
-    req.logger.warning('User is not authorized')
-    req.logger.debug('User is not authorized')
-    return res.sendStatus(401)
+  try {
+    const session = jwt.verify(req.cookies.jwt, config.authConfig.jwtSessionSecret)
+    if (session.role !== role) throw new Error('User is not authorized')
+    next()
+  } catch (error) {
+    next(error)
   }
-  return next()
 }
-const validateUserAdminOrPremium = async (req, res, next, roles) => {
-  const session = jwt.verify(req.cookies.jwt, config.authConfig.jwtSessionSecret)
-  if (!roles.includes(session.role)) {
-    req.logger.warning('User is not authorized')
-    req.logger.debug('User is not authorized')
-    return res.sendStatus(401)
+const validateUserRoles = async (req, res, next, roles) => {
+  try {
+    const session = jwt.verify(req.cookies.jwt, config.authConfig.jwtSessionSecret)
+    if (!roles.includes(session.role)) throw new Error('User is not authorized')
+    next()
+  } catch (error) {
+    next(error)
   }
-  return next()
 }
 
 const existSession = async (req, res, next, path) => {
@@ -53,7 +53,6 @@ const existSession = async (req, res, next, path) => {
       const result = await userService.getOne(email)
       if (result.status === 404) {
         req.logger.warning('Session exist but user does not exist')
-        req.logger.debug('Session exist but user does not exist')
         res.clearCookie('jwt')
       }
       if (result.status === 200) {
@@ -62,7 +61,7 @@ const existSession = async (req, res, next, path) => {
       }
     }
 
-    return next()
+    next()
   } catch (error) {
     next(error)
   }
@@ -72,7 +71,8 @@ export const requireApiSession = async (req, res, next) => await validateSession
 export const requireViewSession = async (req, res, next) => await validateSession(req, res, next, '/signin')
 
 export const requireAuthRoleAdmin = async (req, res, next) => await validateUser(req, res, next, 'admin')
-export const requireAuthRoleAdminOrPremium = async (req, res, next) => await validateUserAdminOrPremium(req, res, next, ['admin', 'premium'])
-export const requireAuthRoleUser = async (req, res, next) => await validateUser(req, res, next, 'usuario')
+// export const requireAuthRoleUser = async (req, res, next) => await validateUser(req, res, next, 'usuario')
+export const requireAuthRoleAdminOrPremium = async (req, res, next) => await validateUserRoles(req, res, next, ['admin', 'premium'])
+export const requireAuthRoleUserOrPremium = async (req, res, next) => await validateUserRoles(req, res, next, ['usuario', 'premium'])
 
 export const requireExistSession = async (req, res, next) => await existSession(req, res, next, '/products')

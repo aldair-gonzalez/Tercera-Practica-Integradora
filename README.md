@@ -1,4 +1,4 @@
-# Tercera practica Integradora ⚡️
+# Validación de Usuarios ⚡️
 
 - Realizar un sistema de recuperación de contraseña, la cual envíe por medio de un correo un botón que redireccione a una página para restablecer la contraseña (no recuperarla).
   - link del correo debe expirar después de 1 hora de enviado.
